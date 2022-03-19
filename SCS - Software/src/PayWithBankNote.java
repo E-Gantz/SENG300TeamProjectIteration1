@@ -8,21 +8,23 @@ import org.lsmr.selfcheckout.devices.BanknoteValidator;
 import org.lsmr.selfcheckout.devices.SelfCheckoutStation;
 import org.lsmr.selfcheckout.devices.observers.AbstractDeviceObserver;
 import org.lsmr.selfcheckout.devices.observers.BanknoteSlotObserver;
-import org.lsmr.selfcheckout.devices.observers.BanknoteStorageUnitObserver;
+import org.lsmr.selfcheckout.devices.observers.BanknoteStorageUnitObserver; // may not need this
 import org.lsmr.selfcheckout.devices.observers.BanknoteValidatorObserver;
 
 public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorObserver, BanknoteStorageUnitObserver {
 
 
 /**
- * This class represents the use case of paying with a bank note at the self checkout station
+ * This class represents the use case of paying with a bank note at the self checkout station. 
+ * Needs to be integrated into a more general "Make Cash Payment" class with coin transactions. 
  * 
- * When an inserted banknote is validated, it 
+ * Note: When a banknote is validated by the hardware, it gets added to the running total of cash input. 
+ * 		If the banknote is then ejected in error, it is removed from the running total. This prevents case where user 
+ * 		inputs a valid note, gets it back, and keeps their money. 
  * 
  * 
  */
 	
-	// The total banknotes that have been inserted 
 	private final BanknoteSlot slot;
 	private final BanknoteValidator validator; 
 	private final BanknoteStorageUnit storage;
@@ -34,7 +36,9 @@ public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorO
 	
 	
 	/**
-	 * Basic constructor, don't know what this needs yet 
+	 * Constructor to set 
+	 * @param BigDecimal price - the price of the transaction
+	 * @param station - the checkout station the transaction is occurring on
 	 */
 	public PayWithBankNote(BigDecimal price, SelfCheckoutStation station) {
 		
@@ -66,7 +70,6 @@ public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorO
 
 	@Override
 	public void disabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
-		// ignore
 		
 	}
 
