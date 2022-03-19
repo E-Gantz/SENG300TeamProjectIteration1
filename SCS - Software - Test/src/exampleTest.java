@@ -6,7 +6,6 @@ import org.lsmr.selfcheckout.Banknote;
 
 public class exampleTest {
 	Banknote b;
-	exampleClass a;
 
 	@Test
 	public void test() {

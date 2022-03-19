@@ -1,3 +1,4 @@
+package scsSoftware;
 import java.util.HashMap;
 import org.lsmr.selfcheckout.products.BarcodedProduct;
 import org.lsmr.selfcheckout.Barcode;
