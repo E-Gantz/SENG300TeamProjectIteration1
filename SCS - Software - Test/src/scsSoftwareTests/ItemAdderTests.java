@@ -27,6 +27,7 @@ public class ItemAdderTests {
 	public BarcodedItem item2 = new BarcodedItem(bc2, 4);
 	public BarcodedProduct prod1 = new BarcodedProduct(bc1, "Bread", new BigDecimal(5));
 	public BarcodedProduct prod2 = new BarcodedProduct(bc2, "Milk", new BigDecimal(10));
+	public int cartSize;
 
 	@Before
 	public void setUp() {
@@ -38,6 +39,7 @@ public class ItemAdderTests {
 		adder = new ItemAdder(inventory, cart);
 		scanner.attach(adder);
 		scanner.endConfigurationPhase();
+		cartSize = cart.getItemNames().size();
 	}
 
 	@After
@@ -52,13 +54,40 @@ public class ItemAdderTests {
 	@Test
 	public void itemPriceAddedToCart() {
 		scanner.scan(item1);
+		//next two if statements simulate someone retrying to scan a couple times if the first scan doesn't work
+		if (cart.getItemNames().size() == cartSize) {
+			scanner.scan(item1);
+		}
+		if (cart.getItemNames().size() == cartSize) {
+			scanner.scan(item1);
+		}
 		assertTrue(prod1.getPrice().equals(cart.getTotalPrice()));
 	}
 	
 	@Test
 	public void itemNameAddedToCart() {
 		scanner.scan(item1);
+		//next two if statements simulate someone retrying to scan a couple times if the first scan doesn't work
+		if (cart.getItemNames().size() == cartSize) {
+			scanner.scan(item1);
+		}
+		if (cart.getItemNames().size() == cartSize) {
+			scanner.scan(item1);
+		}
 		assertTrue(cart.getItemNames().contains(prod1.getDescription()));
+	}
+	
+	@Test
+	public void scannerDisabledAfterScan() {
+		scanner.scan(item2);
+		//next two if statements simulate someone retrying to scan a couple times if the first scan doesn't work
+		if (cart.getItemNames().size() == cartSize) {
+			scanner.scan(item1);
+		}
+		if (cart.getItemNames().size() == cartSize) {
+			scanner.scan(item1);
+		}
+		assertTrue(scanner.isDisabled());
 	}
 
 }
