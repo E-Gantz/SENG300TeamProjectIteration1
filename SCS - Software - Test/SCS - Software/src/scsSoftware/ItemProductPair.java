@@ -1,3 +1,6 @@
+package scsSoftware;
+import java.math.BigDecimal;
+
 import org.lsmr.selfcheckout.BarcodedItem;
 import org.lsmr.selfcheckout.products.BarcodedProduct;
 
@@ -15,5 +18,17 @@ public class ItemProductPair {
 
     public BarcodedProduct getProduct() {
         return this.product;
+    }
+    
+    public double getWeight() {
+    	return this.item.getWeight();
+    }
+    
+    public String getDescription() {
+    	return this.product.getDescription();
+    }
+    
+    public BigDecimal getPrice() {
+    	return this.product.getPrice();
     }
 }
