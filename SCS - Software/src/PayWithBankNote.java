@@ -22,6 +22,8 @@ public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorO
  * 		If the banknote is then ejected in error, it is removed from the running total. This prevents case where user 
  * 		inputs a valid note, gets it back, and keeps their money. 
  * 
+ *  Disables input slot when enough valid money is inserted. 
+ * 
  * 
  */
 	
@@ -29,8 +31,9 @@ public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorO
 	private final BanknoteValidator validator; 
 	private boolean validated; // tracks whether the most recently inserted bank note was valid
 	private int validatedValue; // the value of the most recently inserted VALID bank note
-	private BigDecimal runningTotal; // the running total of money the user has inserted
+	
 	private BigDecimal price; // The total price of the transaction the user is paying for 
+	public BigDecimal runningTotal; // the running total of money the user has inserted
 	
 	
 	
@@ -103,7 +106,7 @@ public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorO
 	
 	// Adds a banknote's value to the customer's running total
 	public void addToTotal(int value) {
-		runningTotal.add(BigDecimal.valueOf(value));
+		runningTotal = runningTotal.add(new BigDecimal(value));
 		int temp = this.price.compareTo(runningTotal);
 		// if price is equal to or smaller than the running total
 		if(temp == 0 || temp == -1) {
@@ -113,7 +116,7 @@ public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorO
 	
 	// Removes a banknote's value from the customer's running total (happens when valid bank note is ejected)
 	public void subtractFromTotal(int value) {
-		runningTotal.subtract(BigDecimal.valueOf(value));
+		runningTotal = runningTotal.subtract(BigDecimal.valueOf(value));
 	}
 	
 	// disable the input slot when transaction is over
@@ -121,4 +124,7 @@ public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorO
 		slot.disable();
 	}
 	
+	public BigDecimal getRemainingPrice() {
+		return this.price.subtract(runningTotal);
+	}
 }
