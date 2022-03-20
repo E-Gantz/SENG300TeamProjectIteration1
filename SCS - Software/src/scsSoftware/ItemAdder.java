@@ -21,23 +21,25 @@ public class ItemAdder implements BarcodeScannerObserver{
 	@Override
 	public void enabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
 		// Auto-generated method stub
+		//maybe put 'you may continue scanning' on the screen or just remove the disabled screen
 		
 	}
 
 	@Override
 	public void disabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
 		// Auto-generated method stub
+		//this could be where we put the 'please add item to bagging area' screen on the gui
 		
 	}
 
 	@Override
 	public void barcodeScanned(BarcodeScanner barcodeScanner, Barcode barcode) {
 		ItemProductPair itemProduct = productInventory.getInventory(barcode);
-		BarcodedItem scannedItem = itemProduct.getItem();
-		BarcodedProduct scannedProduct = itemProduct.getProduct();
+		//BarcodedItem scannedItem = itemProduct.getItem();
+		//BarcodedProduct scannedProduct = itemProduct.getProduct();
 		
 		cart.addToCart(itemProduct);
-		//should throw up a 'please add item to bagging area' screen on the gui here
+		//should throw up a 'please add item to bagging area' screen on the gui here, could be done by the above disabled method
 		barcodeScanner.disable();
 	}
 }

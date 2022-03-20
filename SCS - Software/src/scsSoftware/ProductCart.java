@@ -23,4 +23,12 @@ public class ProductCart {
     	items.remove(removeMe.getDescription());
     	totalPrice = totalPrice.subtract(removeMe.getPrice());
     }
+    
+    public BigDecimal getTotalPrice() {
+    	return this.totalPrice;
+    }
+    
+    public ArrayList<String> getItemNames(){
+    	return this.items;
+    }
 }
