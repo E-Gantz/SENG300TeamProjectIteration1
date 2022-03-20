@@ -11,7 +11,7 @@ import org.lsmr.selfcheckout.devices.observers.BanknoteSlotObserver;
 import org.lsmr.selfcheckout.devices.observers.BanknoteStorageUnitObserver; // may not need this
 import org.lsmr.selfcheckout.devices.observers.BanknoteValidatorObserver;
 
-public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorObserver, BanknoteStorageUnitObserver {
+public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorObserver {
 
 
 /**
@@ -27,7 +27,6 @@ public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorO
 	
 	private final BanknoteSlot slot;
 	private final BanknoteValidator validator; 
-	private final BanknoteStorageUnit storage;
 	private boolean validated; // tracks whether the most recently inserted bank note was valid
 	private int validatedValue; // the value of the most recently inserted VALID bank note
 	private BigDecimal runningTotal; // the running total of money the user has inserted
@@ -45,12 +44,7 @@ public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorO
 		// Register the devices needed for the use case 
 		this.slot = station.banknoteInput;
 		this.validator = station.banknoteValidator;
-		this.storage = station.banknoteStorage;
-		
-		// Make this class an observer of the devices so we can receive notifications
-		slot.attach(this);
-		validator.attach(this);
-		storage.attach(this);
+
 		
 		// No bank notes have been inserted yet 
 		validated = false; 
@@ -61,11 +55,9 @@ public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorO
 	}
 	
 
-
 	@Override
 	public void enabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
 		// ignore
-		
 	}
 
 	@Override
@@ -89,7 +81,6 @@ public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorO
 
 	@Override
 	public void banknoteRemoved(BanknoteSlot slot) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -109,47 +100,25 @@ public class PayWithBankNote implements BanknoteSlotObserver, BanknoteValidatorO
 		
 	}
 
-
-
-	@Override
-	public void banknotesFull(BanknoteStorageUnit unit) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-	@Override
-	public void banknoteAdded(BanknoteStorageUnit unit) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-	@Override
-	public void banknotesLoaded(BanknoteStorageUnit unit) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-	@Override
-	public void banknotesUnloaded(BanknoteStorageUnit unit) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 	
 	// Adds a banknote's value to the customer's running total
 	public void addToTotal(int value) {
 		runningTotal.add(BigDecimal.valueOf(value));
+		int temp = this.price.compareTo(runningTotal);
+		// if price is equal to or smaller than the running total
+		if(temp == 0 || temp == -1) {
+			finishedTransaction(this.slot);
+		}
 	}
 	
 	// Removes a banknote's value from the customer's running total (happens when valid bank note is ejected)
 	public void subtractFromTotal(int value) {
 		runningTotal.subtract(BigDecimal.valueOf(value));
+	}
+	
+	// disable the input slot when transaction is over
+	private void finishedTransaction(BanknoteSlot slot) {
+		slot.disable();
 	}
 	
 }
