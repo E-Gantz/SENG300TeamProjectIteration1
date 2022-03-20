@@ -6,6 +6,10 @@ import org.lsmr.selfcheckout.devices.SimulationException;
 import org.lsmr.selfcheckout.devices.observers.AbstractDeviceObserver;
 import org.lsmr.selfcheckout.devices.observers.ElectronicScaleObserver;
 
+/*
+* PlacingItem class campare the expecting weight of an item and the actual weight put on the scale.
+* Instantiate ElectronicScale class 
+*/
 public class PlacingItem implements ElectronicScaleObserver{
 	
 	private boolean overload;
@@ -14,7 +18,7 @@ public class PlacingItem implements ElectronicScaleObserver{
 	private double itemWeight;
 	private BarcodeScanner scanner;
 	private ProductCart productCart;
-	
+
 	public PlacingItem(BarcodeScanner scanner, ProductCart cart) {
 		this.scanner = scanner;
 		this.productCart = cart;
@@ -24,7 +28,7 @@ public class PlacingItem implements ElectronicScaleObserver{
 		this.overload = false;
 	}
 	
-	
+	// Add expected weight of new item into class
 	public void itemWeightAdded (double itemWeight){
 		this.itemWeight = itemWeight;
 	}
