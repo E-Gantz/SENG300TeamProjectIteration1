@@ -62,6 +62,7 @@ public class PlacingItemTest {
 	@Test
 	public void testCheckAdd1() {
 		ElectronicScale scale1 = new ElectronicScale(15, 3);
+		scale1.attach(temp);
 		boolean test = false;
 		try {
 			scale1.add(item1);
