@@ -55,7 +55,7 @@ public class CoinPayment implements CoinSlotObserver, CoinValidatorObserver {
 	
 	@Override
 	public void invalidCoinDetected(CoinValidator validator) {
-		// can be ignored for this project iteration
+		// can be ignored
 	}
 	
 	@Override
@@ -66,7 +66,7 @@ public class CoinPayment implements CoinSlotObserver, CoinValidatorObserver {
 
 	@Override
 	public void validCoinDetected(CoinValidator validator, BigDecimal value) {
-		// 
+		// when a valid coin is entered it is added to the total value
 		validated = true;
 		validatedValue = value;
 		addToTotal(validatedValue);
@@ -91,5 +91,3 @@ public class CoinPayment implements CoinSlotObserver, CoinValidatorObserver {
 		return this.price.subtract(runningTotal);
 	}
 }
-
-
