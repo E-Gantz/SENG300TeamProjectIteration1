@@ -77,7 +77,7 @@ public class CoinPayment implements CoinSlotObserver, CoinValidatorObserver {
 		runningTotal = runningTotal.add(value);
 		int temp = this.price.compareTo(runningTotal);
 		// if price is equal to or smaller than the running total
-		if(temp <= 0) {
+		if(temp == 0 || temp == -1) {
 			finishedTransaction(this.slot);
 		}
 	}
@@ -91,4 +91,3 @@ public class CoinPayment implements CoinSlotObserver, CoinValidatorObserver {
 		return this.price.subtract(runningTotal);
 	}
 }
-
