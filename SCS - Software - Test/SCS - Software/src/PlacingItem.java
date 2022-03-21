@@ -1,42 +1,28 @@
-import org.lsmr.selfcheckout.Item;
+package scsSoftware;
 import org.lsmr.selfcheckout.devices.AbstractDevice;
+import org.lsmr.selfcheckout.devices.BarcodeScanner;
 import org.lsmr.selfcheckout.devices.ElectronicScale;
-import org.lsmr.selfcheckout.devices.OverloadException;
 import org.lsmr.selfcheckout.devices.SimulationException;
 import org.lsmr.selfcheckout.devices.observers.AbstractDeviceObserver;
 import org.lsmr.selfcheckout.devices.observers.ElectronicScaleObserver;
 
 public class PlacingItem implements ElectronicScaleObserver{
 	
-	private ElectronicScale scale;
-	private boolean overload = false;
-	private double weight = 0.0;
-	private Item newItem;
+	private boolean overload;
+	private double lastWeight;
+	private double newWeight;
+	private double itemWeight;
+	private BarcodeScanner scanner;
+	private ProductCart productCart;
 	
-	public PlacingItem (ElectronicScale scale, Item newItem) throws OverloadException {
-		this.scale = scale;
-		this.scale.attach(this);
-		this.newItem = newItem;
-		scale.endConfigurationPhase();
-		this.weight = scale.getCurrentWeight();
+	public PlacingItem(BarcodeScanner scanner, ProductCart cart) {
+		this.scanner = scanner;
+		this.productCart = cart;
+		this.lastWeight = 0.0;
+		this.newWeight = 0.0;
+		this.itemWeight = 0.0;
+		this.overload = false;
 	}
-	
-	
-	public void checkScaleAdd() throws OverloadException{
-		double currentWeight = scale.getCurrentWeight();
-		double itemWeight = newItem.getWeight();
-		scale.add(newItem);
-		if (weight == currentWeight + itemWeight)
-			return;
-		else if(overload)
-			throw new SimulationException(new IllegalStateException("The scale is overload now, please remove the last item"));
-		else
-			throw new SimulationException("The adding item was not correct one on the scale.");
-	}
-	
-	public double getLastWeight() {
-		return weight;
-	} 
 	
 
 	@Override
@@ -53,21 +39,32 @@ public class PlacingItem implements ElectronicScaleObserver{
 
 	@Override
 	public void weightChanged(ElectronicScale scale, double weightInGrams) {
-		this.weight = weightInGrams;
+		this.newWeight = weightInGrams;
+		this.itemWeight = productCart.cart.get((productCart.cart.size())-1).getWeight();
+		if (newWeight == lastWeight + itemWeight) {
+			this.lastWeight = newWeight;
+			this.itemWeight = 0.0;
+			this.scanner.enable();
+			return;
+		}
+		else
+			throw new SimulationException("The adding item was not correct one on the scale.");
 	}
 
 	@Override
 	public void overload(ElectronicScale scale) {
 		this.overload = true;
+		throw new SimulationException(new IllegalStateException("The scale is overload now, please remove the last item"));
 	}
 
 	@Override
 	public void outOfOverload(ElectronicScale scale) {
 		// TODO Auto-generated method stub
-		
 	}
 	
-	
-	
+	public double getLastWeight() {
+		return this.lastWeight;
+	}
 
 }
+

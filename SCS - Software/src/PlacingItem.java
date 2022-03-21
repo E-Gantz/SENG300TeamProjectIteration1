@@ -1,4 +1,6 @@
+package scsSoftware;
 import org.lsmr.selfcheckout.devices.AbstractDevice;
+import org.lsmr.selfcheckout.devices.BarcodeScanner;
 import org.lsmr.selfcheckout.devices.ElectronicScale;
 import org.lsmr.selfcheckout.devices.SimulationException;
 import org.lsmr.selfcheckout.devices.observers.AbstractDeviceObserver;
@@ -6,14 +8,22 @@ import org.lsmr.selfcheckout.devices.observers.ElectronicScaleObserver;
 
 public class PlacingItem implements ElectronicScaleObserver{
 	
-	private boolean overload = false;
-	private double lastWeight = 0.0;
-	private double newWeight = 0.0;
-	private double itemWeight = 0.0;
+	private boolean overload;
+	private double lastWeight;
+	private double newWeight;
+	private double itemWeight;
+	private BarcodeScanner scanner;
+	private ProductCart productCart;
 	
-	public void itemWeightAdded (double itemWeight){
-		this.itemWeight = itemWeight;
+	public PlacingItem(BarcodeScanner scanner, ProductCart cart) {
+		this.scanner = scanner;
+		this.productCart = cart;
+		this.lastWeight = 0.0;
+		this.newWeight = 0.0;
+		this.itemWeight = 0.0;
+		this.overload = false;
 	}
+	
 
 	@Override
 	public void enabled(AbstractDevice<? extends AbstractDeviceObserver> device) {
@@ -30,9 +40,11 @@ public class PlacingItem implements ElectronicScaleObserver{
 	@Override
 	public void weightChanged(ElectronicScale scale, double weightInGrams) {
 		this.newWeight = weightInGrams;
+		this.itemWeight = productCart.cart.get((productCart.cart.size())-1).getWeight();
 		if (newWeight == lastWeight + itemWeight) {
-			lastWeight = newWeight;
-			itemWeight = 0.0;
+			this.lastWeight = newWeight;
+			this.itemWeight = 0.0;
+			this.scanner.enable();
 			return;
 		}
 		else
@@ -49,5 +61,10 @@ public class PlacingItem implements ElectronicScaleObserver{
 	public void outOfOverload(ElectronicScale scale) {
 		// TODO Auto-generated method stub
 	}
+	
+	public double getLastWeight() {
+		return this.lastWeight;
+	}
 
 }
+
